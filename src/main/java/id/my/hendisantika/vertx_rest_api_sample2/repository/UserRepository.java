@@ -1,11 +1,13 @@
 package id.my.hendisantika.vertx_rest_api_sample2.repository;
 
 import id.my.hendisantika.vertx_rest_api_sample2.entity.User;
+import io.netty.util.internal.StringUtil;
 import io.vertx.core.json.JsonObject;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -64,5 +66,29 @@ public class UserRepository {
 
     return result;
   }
+
+  private String sqlFilter(JsonObject filter) {
+    String sqlQuery = "SELECT u FROM User u";
+    String preParameter = " WHERE";
+    String sqlParameter = "";
+
+    if (!StringUtil.isNullOrEmpty(filter.getString("name"))) {
+      sqlParameter += preParameter + " upper(u.name) LIKE upper(:name)";
+      preParameter = " OR";
+    }
+
+    if (!StringUtil.isNullOrEmpty(filter.getString("status")) && !filter.getString("status").equals("AI")) {
+      sqlParameter += preParameter + " u.status = :status";
+      preParameter = " OR";
+    }
+
+    if (!StringUtil.isNullOrEmpty(String.valueOf(filter.getValue("profile"))) && !String.valueOf(filter.getValue("profile")).equals("99")) {
+      sqlParameter += preParameter + " u.profile = :profile";
+      preParameter = " OR";
+    }
+
+    return sqlQuery + sqlParameter;
+  }
+
 
 }
