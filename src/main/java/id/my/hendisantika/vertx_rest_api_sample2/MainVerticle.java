@@ -65,4 +65,14 @@ public class MainVerticle extends AbstractVerticle {
     });
   }
 
+  private void getUsers(RoutingContext context) {
+    userService.list(ar -> {
+      if (ar.succeeded()) {
+        sendSuccess(Json.encodePrettily(ar.result()), context.response());
+      } else {
+        sendError(ar.cause().getMessage(), context.response());
+      }
+    });
+  }
+
 }
