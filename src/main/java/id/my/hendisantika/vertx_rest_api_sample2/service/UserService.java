@@ -57,4 +57,23 @@ public class UserService {
       future.fail(ex);
     }
   }
+
+  public void save(User newUser, Handler<AsyncResult<User>> handler) {
+    Future<User> future = Future.future();
+    future.setHandler(handler);
+
+    try {
+      User user = userDao.getById(newUser.getCpf());
+
+      if (user != null) {
+        future.fail("Usuário já incluído.");
+        return;
+      }
+      newUser.setStatus("A");
+      userDao.persist(newUser);
+      future.complete();
+    } catch (Throwable ex) {
+      future.fail(ex);
+    }
+  }
 }
