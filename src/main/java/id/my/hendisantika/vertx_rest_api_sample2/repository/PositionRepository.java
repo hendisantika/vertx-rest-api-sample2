@@ -1,6 +1,8 @@
 package id.my.hendisantika.vertx_rest_api_sample2.repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,5 +28,14 @@ public class PositionRepository {
     }
 
     return instance;
+  }
+
+  private EntityManager getEntityManager() {
+    EntityManagerFactory factory = Persistence.createEntityManagerFactory("crudHibernatePU");
+    if (entityManager == null) {
+      entityManager = factory.createEntityManager();
+    }
+
+    return entityManager;
   }
 }
