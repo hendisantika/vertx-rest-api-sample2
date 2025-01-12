@@ -1,5 +1,7 @@
 package id.my.hendisantika.vertx_rest_api_sample2.repository;
 
+import id.my.hendisantika.vertx_rest_api_sample2.entity.Position;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -37,5 +39,9 @@ public class PositionRepository {
     }
 
     return entityManager;
+  }
+
+  public Position getById(final int id) {
+    return entityManager.find(Position.class, id);
   }
 }
