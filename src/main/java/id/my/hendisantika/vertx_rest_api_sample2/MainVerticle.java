@@ -5,7 +5,9 @@ import id.my.hendisantika.vertx_rest_api_sample2.service.UserService;
 import io.netty.handler.codec.http.HttpMethod;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -127,6 +129,16 @@ public class MainVerticle extends AbstractVerticle {
         sendError(ar.cause().getMessage(), context.response());
       }
     });
+  }
+
+  private void sendError(String errorMessage, HttpServerResponse response) {
+    JsonObject jo = new JsonObject();
+    jo.put("errorMessage", errorMessage);
+
+    response
+      .setStatusCode(500)
+      .putHeader("content-type", "application/json; charset=utf-8")
+      .end(Json.encodePrettily(jo));
   }
 
 }
