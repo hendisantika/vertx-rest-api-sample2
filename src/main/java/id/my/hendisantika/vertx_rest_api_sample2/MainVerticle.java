@@ -147,4 +147,11 @@ public class MainVerticle extends AbstractVerticle {
       .putHeader("content-type", "application/json; charset=utf-8")
       .end();
   }
+
+  private void sendSuccess(String responseBody, HttpServerResponse response) {
+    response
+      .setStatusCode(200)
+      .putHeader("content-type", "application/json; charset=utf-8")
+      .end(responseBody);
+  }
 }
