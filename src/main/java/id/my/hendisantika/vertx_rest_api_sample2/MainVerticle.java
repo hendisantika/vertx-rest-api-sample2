@@ -1,8 +1,11 @@
 package id.my.hendisantika.vertx_rest_api_sample2;
 
+import id.my.hendisantika.vertx_rest_api_sample2.service.PositionService;
+import id.my.hendisantika.vertx_rest_api_sample2.service.UserService;
 import io.netty.handler.codec.http.HttpMethod;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.json.Json;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -48,4 +51,18 @@ public class MainVerticle extends AbstractVerticle {
           fut.fail(result.cause());
       });
   }
+
+  PositionService positionService = new PositionService();
+  UserService userService = new UserService();
+
+  private void getPositions(RoutingContext context) {
+    positionService.list(ar -> {
+      if (ar.succeeded()) {
+        sendSuccess(Json.encodePrettily(ar.result()), context.response());
+      } else {
+        sendError(ar.cause().getMessage(), context.response());
+      }
+    });
+  }
+
 }
