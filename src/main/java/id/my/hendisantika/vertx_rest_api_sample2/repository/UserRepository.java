@@ -115,4 +115,15 @@ public class UserRepository {
       entityManager.getTransaction().rollback();
     }
   }
+
+  public void merge(User user) {
+    try {
+      entityManager.getTransaction().begin();
+      entityManager.merge(user);
+      entityManager.getTransaction().commit();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      entityManager.getTransaction().rollback();
+    }
+  }
 }
