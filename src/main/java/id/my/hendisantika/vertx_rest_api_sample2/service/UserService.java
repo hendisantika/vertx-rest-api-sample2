@@ -5,6 +5,7 @@ import id.my.hendisantika.vertx_rest_api_sample2.repository.UserRepository;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonObject;
 
 import java.util.List;
 
@@ -29,6 +30,18 @@ public class UserService {
       List<User> result = userDao.findAll();
       future.complete(result);
     } catch (Throwable ex) {
+      future.fail(ex);
+    }
+  }
+
+  public void getByFilter(JsonObject filter, Handler<AsyncResult<List<User>>> handler) {
+    Future<List<User>> future = Future.future();
+    future.setHandler(handler);
+
+    try {
+      List<User> result = userDao.getByFilter(filter);
+      future.complete(result);
+    } catch (Exception ex) {
       future.fail(ex);
     }
   }
