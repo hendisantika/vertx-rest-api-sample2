@@ -76,4 +76,16 @@ public class UserService {
       future.fail(ex);
     }
   }
+
+  public void update(User user, Handler<AsyncResult<User>> handler) {
+    Future<User> future = Future.future();
+    future.setHandler(handler);
+
+    try {
+      userDao.merge(user);
+      future.complete();
+    } catch (Throwable ex) {
+      future.fail(ex);
+    }
+  }
 }
