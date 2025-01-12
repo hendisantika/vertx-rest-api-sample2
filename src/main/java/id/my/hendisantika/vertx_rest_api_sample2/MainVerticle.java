@@ -118,4 +118,15 @@ public class MainVerticle extends AbstractVerticle {
       }
     });
   }
+
+  private void remove(RoutingContext context) {
+    userService.remove(context.request().getParam("id"), ar -> {
+      if (ar.succeeded()) {
+        sendSuccess(context.response());
+      } else {
+        sendError(ar.cause().getMessage(), context.response());
+      }
+    });
+  }
+
 }
