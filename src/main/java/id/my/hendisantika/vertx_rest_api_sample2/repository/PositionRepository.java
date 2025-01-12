@@ -5,6 +5,7 @@ import id.my.hendisantika.vertx_rest_api_sample2.entity.Position;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,5 +44,11 @@ public class PositionRepository {
 
   public Position getById(final int id) {
     return entityManager.find(Position.class, id);
+  }
+
+
+  @SuppressWarnings("unchecked")
+  public List<Position> findAll() {
+    return entityManager.createQuery("FROM " + Position.class.getName()).getResultList();
   }
 }
