@@ -90,5 +90,19 @@ public class UserRepository {
     return sqlQuery + sqlParameter;
   }
 
+  private void parametersFilter(JsonObject filter, Query query) {
+    if (!StringUtil.isNullOrEmpty(filter.getString("name"))) {
+      String likeNameParam = "%" + filter.getString("name") + "%";
+      query.setParameter("name", likeNameParam);
+    }
+
+    if (!StringUtil.isNullOrEmpty(filter.getString("status")) && !filter.getString("status").equals("AI")) {
+      query.setParameter("status", filter.getString("status"));
+    }
+
+    if (!StringUtil.isNullOrEmpty(String.valueOf(filter.getValue("profile"))) && !String.valueOf(filter.getValue("profile")).equals("99")) {
+      query.setParameter("profile", filter.getInteger("profile"));
+    }
+  }
 
 }
