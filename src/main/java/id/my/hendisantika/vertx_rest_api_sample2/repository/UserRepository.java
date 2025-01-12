@@ -1,6 +1,7 @@
 package id.my.hendisantika.vertx_rest_api_sample2.repository;
 
 import id.my.hendisantika.vertx_rest_api_sample2.entity.User;
+import io.vertx.core.json.JsonObject;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -55,4 +56,13 @@ public class UserRepository {
   public List<User> findAll() {
     return entityManager.createQuery("FROM " + User.class.getName()).getResultList();
   }
+
+  public List<User> getByFilter(JsonObject filter) {
+    Query query = entityManager.createQuery(sqlFilter(filter));
+    parametersFilter(filter, query);
+    List<User> result = query.getResultList();
+
+    return result;
+  }
+
 }
