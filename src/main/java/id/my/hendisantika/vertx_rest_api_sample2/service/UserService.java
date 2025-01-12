@@ -1,6 +1,12 @@
 package id.my.hendisantika.vertx_rest_api_sample2.service;
 
+import id.my.hendisantika.vertx_rest_api_sample2.entity.User;
 import id.my.hendisantika.vertx_rest_api_sample2.repository.UserRepository;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,4 +20,16 @@ import id.my.hendisantika.vertx_rest_api_sample2.repository.UserRepository;
  */
 public class UserService {
   private final UserRepository userRepository = UserRepository.getInstance();
+
+  public void list(Handler<AsyncResult<List<User>>> handler) {
+    Future<List<User>> future = Future.future();
+    future.setHandler(handler);
+
+    try {
+      List<User> result = userDao.findAll();
+      future.complete(result);
+    } catch (Throwable ex) {
+      future.fail(ex);
+    }
+  }
 }
