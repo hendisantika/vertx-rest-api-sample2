@@ -138,4 +138,13 @@ public class UserRepository {
       entityManager.getTransaction().rollback();
     }
   }
+
+  public void removeById(String cpf) {
+    try {
+      User user = getById(cpf);
+      remove(user);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
 }
