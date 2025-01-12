@@ -45,4 +45,16 @@ public class UserService {
       future.fail(ex);
     }
   }
+
+  public void getById(String cpf, Handler<AsyncResult<User>> handler) {
+    Future<User> future = Future.future();
+    future.setHandler(handler);
+
+    try {
+      User result = userDao.getById(cpf);
+      future.complete(result);
+    } catch (Throwable ex) {
+      future.fail(ex);
+    }
+  }
 }
