@@ -126,4 +126,16 @@ public class UserRepository {
       entityManager.getTransaction().rollback();
     }
   }
+
+  public void remove(User user) {
+    try {
+      entityManager.getTransaction().begin();
+      user = entityManager.find(User.class, user.getCpf());
+      entityManager.remove(user);
+      entityManager.getTransaction().commit();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      entityManager.getTransaction().rollback();
+    }
+  }
 }
