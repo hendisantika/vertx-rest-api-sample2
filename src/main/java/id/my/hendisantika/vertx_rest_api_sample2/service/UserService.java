@@ -88,4 +88,17 @@ public class UserService {
       future.fail(ex);
     }
   }
+
+  public void remove(String cpf, Handler<AsyncResult<User>> handler) {
+    Future<User> future = Future.future();
+    future.setHandler(handler);
+
+    try {
+      userDao.removeById(cpf);
+      future.complete();
+    } catch (Throwable ex) {
+      future.fail(ex);
+    }
+  }
+
 }
