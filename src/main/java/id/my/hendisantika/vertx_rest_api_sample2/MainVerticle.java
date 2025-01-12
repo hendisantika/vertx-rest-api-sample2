@@ -99,4 +99,13 @@ public class MainVerticle extends AbstractVerticle {
     });
   }
 
+  private void save(RoutingContext context) {
+    userService.save(Json.decodeValue(context.getBodyAsString(), User.class), ar -> {
+      if (ar.succeeded()) {
+        sendSuccess(context.response());
+      } else {
+        sendError(ar.cause().getMessage(), context.response());
+      }
+    });
+  }
 }
