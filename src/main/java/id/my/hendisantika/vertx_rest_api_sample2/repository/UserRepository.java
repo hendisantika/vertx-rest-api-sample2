@@ -1,5 +1,7 @@
 package id.my.hendisantika.vertx_rest_api_sample2.repository;
 
+import id.my.hendisantika.vertx_rest_api_sample2.entity.User;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -37,6 +39,15 @@ public class UserRepository {
     }
 
     return entityManager;
+  }
+
+  public User getById(String cpf) {
+    Object result = entityManager.find(User.class, cpf);
+    if (result != null) {
+      return (User) result;
+    } else {
+      return null;
+    }
   }
 
 }
