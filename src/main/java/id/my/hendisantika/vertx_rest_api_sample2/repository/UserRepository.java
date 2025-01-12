@@ -5,6 +5,7 @@ import id.my.hendisantika.vertx_rest_api_sample2.entity.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -50,4 +51,8 @@ public class UserRepository {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  public List<User> findAll() {
+    return entityManager.createQuery("FROM " + User.class.getName()).getResultList();
+  }
 }
