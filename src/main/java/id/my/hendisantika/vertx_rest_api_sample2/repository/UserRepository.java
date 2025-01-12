@@ -105,4 +105,14 @@ public class UserRepository {
     }
   }
 
+  public void persist(User user) {
+    try {
+      entityManager.getTransaction().begin();
+      entityManager.persist(user);
+      entityManager.getTransaction().commit();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      entityManager.getTransaction().rollback();
+    }
+  }
 }
