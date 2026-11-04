@@ -1,13 +1,71 @@
+# Dependabot configuration
+# Docs: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
 version: 2
+
 updates:
-  - package-ecosystem: maven
+  # ───────────────────────────── Maven ─────────────────────────────
+  - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: daily
-      time: '05:00'
-      timezone: Asia/Jakarta
+      interval: "daily"
+      time: "05:00"
+      timezone: "Asia/Jakarta"
     open-pull-requests-limit: 10
+    target-branch: "main"
+    assignees:
+      - "hendisantika"
+    labels:
+      - "dependencies"
+      - "java"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+    rebase-strategy: "auto"
+    groups:
+      vertx:
+        patterns:
+          - "io.vertx:*"
+      junit:
+        patterns:
+          - "org.junit*"
+      maven-plugins:
+        patterns:
+          - "org.apache.maven.plugins:*"
+          - "org.codehaus.mojo:*"
+      persistence:
+        patterns:
+          - "org.hibernate*"
+          - "org.postgresql:*"
+          - "org.eclipse.persistence:*"
+          - "net.bytebuddy:*"
+      jackson:
+        patterns:
+          - "com.fasterxml.jackson*"
+    ignore:
+      # Hibernate 6+/7+ requires the jakarta.persistence namespace (code still uses javax.persistence)
+      - dependency-name: "org.hibernate:hibernate-entitymanager"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.eclipse.persistence:javax.persistence"
+        update-types: [ "version-update:semver-major" ]
+
+  # ───────────────────────── GitHub Actions ────────────────────────
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+      time: "05:00"
+      timezone: "Asia/Jakarta"
+    open-pull-requests-limit: 5
+    assignees:
+      - "hendisantika"
+    labels:
+      - "dependencies"
+      - "github_actions"
+    commit-message:
+      prefix: "ci(deps)"
+      include: "scope"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
