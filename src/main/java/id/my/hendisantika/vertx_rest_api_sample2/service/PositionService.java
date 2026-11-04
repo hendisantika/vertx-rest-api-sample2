@@ -19,17 +19,15 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class PositionService {
-  private final PositionRepository positionDao = PositionRepository.getInstance();
+  private PositionRepository repository() {
+    return PositionRepository.getInstance();
+  }
 
   public void list(Handler<AsyncResult<List<Position>>> handler) {
-    Future<List<Position>> future = Future.future();
-    future.setHandler(handler);
-
     try {
-      List<Position> result = positionDao.findAll();
-      future.complete(result);
+      handler.handle(Future.succeededFuture(repository().findAll()));
     } catch (Throwable ex) {
-      future.fail(ex);
+      handler.handle(Future.failedFuture(ex));
     }
   }
 }

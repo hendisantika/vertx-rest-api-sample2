@@ -20,84 +20,69 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class UserService {
-  private final UserRepository userRepository = UserRepository.getInstance();
+
+  /**
+   * Resolved lazily so that deploying the verticle does not require a database connection.
+   */
+  private UserRepository repository() {
+    return UserRepository.getInstance();
+  }
 
   public void list(Handler<AsyncResult<List<User>>> handler) {
-    Future<List<User>> future = Future.future();
-    future.setHandler(handler);
-
     try {
-      List<User> result = userDao.findAll();
-      future.complete(result);
+      handler.handle(Future.succeededFuture(repository().findAll()));
     } catch (Throwable ex) {
-      future.fail(ex);
+      handler.handle(Future.failedFuture(ex));
     }
   }
 
   public void getByFilter(JsonObject filter, Handler<AsyncResult<List<User>>> handler) {
-    Future<List<User>> future = Future.future();
-    future.setHandler(handler);
-
     try {
-      List<User> result = userDao.getByFilter(filter);
-      future.complete(result);
-    } catch (Exception ex) {
-      future.fail(ex);
+      handler.handle(Future.succeededFuture(repository().getByFilter(filter)));
+    } catch (Throwable ex) {
+      handler.handle(Future.failedFuture(ex));
     }
   }
 
   public void getById(String cpf, Handler<AsyncResult<User>> handler) {
-    Future<User> future = Future.future();
-    future.setHandler(handler);
-
     try {
-      User result = userDao.getById(cpf);
-      future.complete(result);
+      handler.handle(Future.succeededFuture(repository().getById(cpf)));
     } catch (Throwable ex) {
-      future.fail(ex);
+      handler.handle(Future.failedFuture(ex));
     }
   }
 
   public void save(User newUser, Handler<AsyncResult<User>> handler) {
-    Future<User> future = Future.future();
-    future.setHandler(handler);
-
     try {
-      User user = userDao.getById(newUser.getCpf());
+      User user = repository().getById(newUser.getCpf());
 
       if (user != null) {
-        future.fail("Usuário já incluído.");
+        handler.handle(Future.failedFuture("Usuário já incluído."));
         return;
       }
       newUser.setStatus("A");
-      userDao.persist(newUser);
-      future.complete();
+      repository().persist(newUser);
+      handler.handle(Future.succeededFuture());
     } catch (Throwable ex) {
-      future.fail(ex);
+      handler.handle(Future.failedFuture(ex));
     }
   }
 
   public void update(User user, Handler<AsyncResult<User>> handler) {
-    Future<User> future = Future.future();
-    future.setHandler(handler);
-
     try {
-      userDao.merge(user);
-      future.complete();
+      repository().merge(user);
+      handler.handle(Future.succeededFuture());
     } catch (Throwable ex) {
-      future.fail(ex);
+      handler.handle(Future.failedFuture(ex));
     }
   }
 
   public void remove(String cpf, Handler<AsyncResult<User>> handler) {
-    Future<User> future = Future.future();
-    future.setHandler(handler);
-
     try {
-      userDao.removeById(cpf);
-      future.complete();
+      repository().removeById(cpf);
+      handler.handle(Future.succeededFuture());
     } catch (Throwable ex) {
-      future.fail(ex);
+      handler.handle(Future.failedFuture(ex));
     }
   }
 

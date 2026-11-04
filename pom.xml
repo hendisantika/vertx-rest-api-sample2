@@ -21,7 +21,7 @@
     <hibernate.version>5.6.15.Final</hibernate.version>
 
     <main.verticle>id.my.hendisantika.vertx_rest_api_sample2.MainVerticle</main.verticle>
-    <launcher.class>io.vertx.core.Launcher</launcher.class>
+    <launcher.class>io.vertx.launcher.application.VertxApplication</launcher.class>
   </properties>
 
   <dependencyManagement>
@@ -44,7 +44,14 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
-      <version>5.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-launcher-application</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
     </dependency>
 
     <dependency>
@@ -127,7 +134,6 @@
         <configuration>
           <mainClass>${launcher.class}</mainClass>
           <arguments>
-            <argument>run</argument>
             <argument>${main.verticle}</argument>
           </arguments>
         </configuration>

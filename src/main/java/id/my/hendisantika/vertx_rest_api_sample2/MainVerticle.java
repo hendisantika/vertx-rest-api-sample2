@@ -1,39 +1,40 @@
 package id.my.hendisantika.vertx_rest_api_sample2;
 
+import id.my.hendisantika.vertx_rest_api_sample2.entity.User;
 import id.my.hendisantika.vertx_rest_api_sample2.service.PositionService;
 import id.my.hendisantika.vertx_rest_api_sample2.service.UserService;
-import io.netty.handler.codec.http.HttpMethod;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class MainVerticle extends AbstractVerticle {
 
-  @Override
-  public void start(Future<Void> fut) {
-    Router router = Router.router(vertx); // <1>
-    // CORS support
-    Set<String> allowHeaders = new HashSet<>();
-    allowHeaders.add("x-requested-with");
-    allowHeaders.add("Access-Control-Allow-Origin");
-    allowHeaders.add("origin");
-    allowHeaders.add("Content-Type");
-    allowHeaders.add("accept");
-    Set<HttpMethod> allowMethods = new HashSet<>();
-    allowMethods.add(HttpMethod.GET);
-    allowMethods.add(HttpMethod.POST);
-    allowMethods.add(HttpMethod.DELETE);
-    allowMethods.add(HttpMethod.PUT);
+  private final PositionService positionService = new PositionService();
+  private final UserService userService = new UserService();
 
-    router.route().handler(CorsHandler.create("*") // <2>
+  @Override
+  public void start(Promise<Void> startPromise) {
+    Router router = Router.router(vertx);
+
+    // CORS support
+    Set<String> allowHeaders = Set.of(
+      "x-requested-with", "Access-Control-Allow-Origin", "origin", "Content-Type", "accept");
+    Set<HttpMethod> allowMethods = Set.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PUT);
+
+    router.route().handler(CorsHandler.create()
+      .addOrigin("*")
       .allowedHeaders(allowHeaders)
       .allowedMethods(allowMethods));
-    router.route().handler(BodyHandler.create()); // <3>
+    router.route().handler(BodyHandler.create());
 
     // routes
     router.get("/position").handler(this::getPositions);
@@ -44,18 +45,12 @@ public class MainVerticle extends AbstractVerticle {
     router.delete("/user/:id").handler(this::remove);
     router.post("/user/filter").handler(this::getUsersByFilter);
 
-    vertx.createHttpServer() // <4>
-      .requestHandler(router::accept)
-      .listen(8080, "0.0.0.0", result -> {
-        if (result.succeeded())
-          fut.complete();
-        else
-          fut.fail(result.cause());
-      });
+    vertx.createHttpServer()
+      .requestHandler(router)
+      .listen(8080, "0.0.0.0")
+      .onSuccess(server -> startPromise.complete())
+      .onFailure(startPromise::fail);
   }
-
-  PositionService positionService = new PositionService();
-  UserService userService = new UserService();
 
   private void getPositions(RoutingContext context) {
     positionService.list(ar -> {
@@ -78,7 +73,7 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void getUsersByFilter(RoutingContext context) {
-    userService.getByFilter(context.getBodyAsJson(), ar -> {
+    userService.getByFilter(context.body().asJsonObject(), ar -> {
       if (ar.succeeded()) {
         sendSuccess(Json.encodePrettily(ar.result()), context.response());
       } else {
@@ -88,7 +83,7 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void getById(RoutingContext context) {
-    userService.getById(context.request().getParam("id"), ar -> {
+    userService.getById(context.pathParam("id"), ar -> {
       if (ar.succeeded()) {
         if (ar.result() != null) {
           sendSuccess(Json.encodePrettily(ar.result()), context.response());
@@ -102,7 +97,7 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void save(RoutingContext context) {
-    userService.save(Json.decodeValue(context.getBodyAsString(), User.class), ar -> {
+    userService.save(Json.decodeValue(context.body().asString(), User.class), ar -> {
       if (ar.succeeded()) {
         sendSuccess(context.response());
       } else {
@@ -112,7 +107,7 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void update(RoutingContext context) {
-    userService.update(Json.decodeValue(context.getBodyAsString(), User.class), ar -> {
+    userService.update(Json.decodeValue(context.body().asString(), User.class), ar -> {
       if (ar.succeeded()) {
         sendSuccess(context.response());
       } else {
@@ -122,7 +117,7 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void remove(RoutingContext context) {
-    userService.remove(context.request().getParam("id"), ar -> {
+    userService.remove(context.pathParam("id"), ar -> {
       if (ar.succeeded()) {
         sendSuccess(context.response());
       } else {

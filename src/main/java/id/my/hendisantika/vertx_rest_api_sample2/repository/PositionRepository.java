@@ -25,7 +25,7 @@ public class PositionRepository {
     entityManager = getEntityManager();
   }
 
-  public static PositionRepository getInstance() {
+  public static synchronized PositionRepository getInstance() {
     if (instance == null) {
       instance = new PositionRepository();
     }

@@ -28,7 +28,7 @@ public class UserRepository {
     entityManager = getEntityManager();
   }
 
-  public static UserRepository getInstance() {
+  public static synchronized UserRepository getInstance() {
     if (instance == null) {
       instance = new UserRepository();
     }
